@@ -25,14 +25,14 @@ instance.interceptors.request.use(
 //响应拦截器
 instance.interceptors.response.use(
     (res) => {
-        //4.摘取核心响应数据
-        if (res.data.code === 200 || res.data.code === 907 || res.data.code === 701 || res.data.code === 801 || res.data.code === 903) {
-            return res
-        } else if (res.config.responseType === 'blob') {
-            return res
-        }
         //3.处理业务失败
         //处理业务失败，给出错误提示，抛出错误
+        //4.摘取核心响应数据
+        if (res.data.code !== 601) {
+            return res
+        }
+        //5.处理成功任务
+
         const useStore = useUserStore()
         ElMessage.error(res.data.desc || '服务异常')
         useStore.removeToken()
@@ -48,10 +48,9 @@ instance.interceptors.response.use(
         } else if (err.response?.status === 500) {
             ElMessage.error('Token过期，请重新登录')
             router.push('/login')
-        }
+        } else if (err.response?.status === 404) ElMessage.error('获取数据失败')
         //错误的默认情况=>只要给提示
         ElMessage.error(err.response.data.desc || '服务异常')
-        router.push('/login')
         return Promise.reject(err)
     }
 )

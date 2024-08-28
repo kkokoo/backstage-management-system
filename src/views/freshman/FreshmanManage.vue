@@ -78,7 +78,6 @@ onMounted(() => {
 
 //删除
 const handleDelete = (row) => {
-    console.log(row)
     // index就是当前页的索引值，row就是当前行的所有数据
     ElMessageBox.confirm('您确认要删除吗?', '温馨提示', {
         confirmButtonText: '确认',
@@ -144,7 +143,7 @@ const rules = {
         { required: true, message: '请输入方向', trigger: 'blur' }
     ],
     jieshao: [
-        // 非空校验
+        // 关闭效验
         { required: false, message: '', trigger: 'blur' }
     ]
 }
@@ -158,6 +157,7 @@ const handleEdit = async (row) => {
     title = '编辑数据'
     isVisible.value = true
     isAdd.value = false
+    // 这里就是修改时将原来的值赋值给表单中，使修改更方便
     ruleForm.value = row
 }
 // 编辑提交
@@ -224,16 +224,17 @@ const downloadUser = async () => {
     }
 }
 </script>
+
 <template>
     <div>
-        <el-row>
-            <el-button type="success" @click="addUser()" style="margin-bottom: 10px">新增</el-button>
+        <el-row style="background-color: #ffffff; padding: 10px">
+            <el-button type="success" @click="addUser()">新增</el-button>
             <el-button type="primary" @click="downloadUser()">
                 下载为Excel表格<el-icon class="el-icon--right"><Upload /></el-icon>
             </el-button>
         </el-row>
 
-        <el-table :data="tableData" style="width: 100%; height: 600px">
+        <el-table :data="tableData" style="width: 100%; height: 520px">
             <el-table-column prop="id" label="编号" width="100" />
             <el-table-column prop="name" label="新生姓名" width="150" />
             <el-table-column prop="banji" label="新生班级" width="200" />
@@ -252,12 +253,13 @@ const downloadUser = async () => {
         <!-- 分页相关-->
         <!-- @size-change="handleSizeChange"   :page-sizes="pageSizes"单页数据数配置项 -->
         <el-pagination
-            style="margin-top: 10px"
+            style="padding: 10px; background-color: #ffffff"
             :current-page="currentPage"
-            layout="total, prev, pager, next, jumper"
+            :page-sizes="[10]"
+            layout="total, sizes,prev, pager, next, jumper"
             :total
             @current-change="handleCurrentChange"
-        />
+        ></el-pagination>
         <!-- 编辑和增加 -->
         <el-dialog :title="title" v-model="isVisible" draggable>
             <el-form :model="ruleForm" :rules="rules" ref="rule_form" label-width="80px" class="rule_form">

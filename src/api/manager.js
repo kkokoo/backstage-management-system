@@ -18,7 +18,11 @@ export const userInsertService = ({ name, youxiang, xuehao, banji, fangxiang, ji
 export const userDownloadService = () => request.get('/guanliyuan/download', { responseType: 'blob' })
 
 // 轮播图
-export const userUploadService = () => request.post('/guanliyuan/upload')
-export const userDelectimagesService = () => request.post('/guanliyuan/delectimages')
+// 上传图片使用elementPlus自己封装的方法有跨域问题
+export const userUploadService = (data) => request.post('/guanliyuan/upload', data)
+export const userDelectimagesService = ({ id }) => request.post('/guanliyuan/delectimages', { id })
+export const userGetallimagesService = () => request.get('/guanliyuan/getallimages')
 
 // 就业
+export const userGetmapService = () => request.get('/guanliyuan/getmap')
+export const userEditmapService = ({ name, value }) => request.post('/guanliyuan/editmap', { name, value })

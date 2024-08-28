@@ -44,7 +44,7 @@ const logout = () => {
         <!-- 头部区域 -->
         <el-header>
             <div class="el-header__logo"></div>
-            <div><strong font-size="30px">后台管理系统</strong></div>
+            <div><strong style="font-size: 30px">后台管理系统</strong></div>
             <!-- 下拉菜单 -->
             <el-button @click="logout()" :icon="SwitchButton"><span>退出登录</span></el-button>
         </el-header>
@@ -83,11 +83,11 @@ const logout = () => {
 
             <el-container>
                 <!-- 中间区域 -->
-                <el-main style="padding: 15px; padding-bottom: 0px">
+                <el-main style="padding: 30px">
                     <router-view></router-view>
                 </el-main>
                 <!-- 底部区域 -->
-                <el-footer style="height: 40px">前端后台管理</el-footer>
+                <el-footer style="height: 50px">前端后台管理</el-footer>
             </el-container>
         </el-container>
     </el-container>
