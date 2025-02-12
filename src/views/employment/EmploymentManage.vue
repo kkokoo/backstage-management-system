@@ -82,6 +82,11 @@ const filteredTableData = computed(() => {
         return tableData.value.slice(start, end)
     }
 })
+
+const handleClose1 = (done) => {
+    getMap()
+    done()
+}
 </script>
 <template>
     <el-table :data="filteredTableData" style="width: 100%; height: 550px">
@@ -89,25 +94,19 @@ const filteredTableData = computed(() => {
         <el-table-column label="人数" sortable prop="value" />
         <el-table-column>
             <template #header>
-                <el-input v-model="search" @click="isSearch = true" style="width: 50%" size="small" placeholder="请输入省份" />
+                <el-input v-model="search" @click="isSearch = true" style="width: 50%" size="small"
+                    placeholder="请输入省份" />
             </template>
             <template #default="scope">
                 <el-button type="primary" plain size="small" @click="handleEdit(scope.row)"> Edit </el-button>
             </template>
         </el-table-column>
     </el-table>
-    <el-pagination
-        style="padding: 10px; background-color: #ffffff"
-        :current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 15, 20, 35]"
-        layout="total, sizes,prev, pager, next, jumper"
-        :total
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-    ></el-pagination>
-    <!-- 编辑和增加 -->
-    <el-dialog :title="title" v-model="isVisible" style="width: 300px" draggable>
+    <el-pagination style="padding: 10px; background-color: #ffffff" :current-page="currentPage"
+        v-model:page-size="pageSize" :page-sizes="[10, 15, 20, 35]" layout="total, sizes,prev, pager, next, jumper"
+        :total @size-change="handleSizeChange" @current-change="handleCurrentChange"></el-pagination>
+    <!-- 编辑 -->
+    <el-dialog :title="title" v-model="isVisible" style="width: 300px" draggable :before-close="handleClose1">
         <el-form :model="editForm" :rules="rules" ref="edit_Form" label-width="80px" class="edit_Form">
             <el-form-item label="省份" prop="name">
                 <el-input v-model="editForm.name" style="width: 80%" />

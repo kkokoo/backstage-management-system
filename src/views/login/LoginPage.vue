@@ -40,12 +40,17 @@ const rules = {
 const userStore = useUserStore()
 const router = useRouter()
 const login = async () => {
-    await form.value.validate()
-    const res = await userLoginService(formModel.value)
-    // res中的数据已经有token了
-    userStore.setToken(res.data.data)
-    ElMessage.success('登录成功')
-    router.push('/manage/freshman')
+    try {
+        await form.value.validate()
+        const res = await userLoginService(formModel.value)
+        // res中的数据已经有token了
+        userStore.setToken(res.data.data)
+        ElMessage.success('登录成功')
+        router.push('/manage/freshman')
+    } catch (error) {
+        ElMessage.fail('登录失败')
+        console.error('登录失败', error)
+    }
 }
 
 //点击回车键登录
@@ -90,11 +95,13 @@ onUnmounted(() => {
                     <el-input v-model="formModel.name" :prefix-icon="User" placeholder="请输入用户名"> </el-input>
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input v-model="formModel.password" :prefix-icon="Lock" type="password" placeholder="请输入密码"> </el-input>
+                    <el-input v-model="formModel.password" :prefix-icon="Lock" type="password" show-password
+                        placeholder="请输入密码"> </el-input>
                 </el-form-item>
                 <!-- 登录按钮 -->
                 <el-form-item>
-                    <el-button class="button" type="primary" auto-insert-space @click="login" @keydown.enter="keyDown">登录</el-button>
+                    <el-button class="button" type="primary" auto-insert-space @click="login"
+                        @keydown.enter="keyDown">登录</el-button>
                 </el-form-item>
             </el-form>
         </el-col>
@@ -102,6 +109,11 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.el-input--large .el-input__wrapper {
+    width: 200px;
+    padding: 1px 15px;
+}
+
 .login-page {
     height: 100vh;
     background-color: #acd0f2;

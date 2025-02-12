@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { userSelectallService, userDelectService, userInsertService, userDownloadService, userUpdateService } from '@/api/manager'
 
 import { Delete, Edit, Upload } from '@element-plus/icons-vue'
@@ -10,6 +10,7 @@ const tableData = ref([])
 let currentPage = ref(1)
 
 const searchAllUser = async () => {
+    isSearch1.value = false
     try {
         const response = await userSelectallService({ page: currentPage.value })
         tableData.value = response.data.data // 更新用户数据
@@ -43,6 +44,9 @@ const counterAll = async () => {
         let totalSize = 0
         const response = await userSelectallService({ page: 0 })
         totalSize += response.data.data.length
+        if (isSearch1.value) {
+            tableData.value = response.data.data
+        }
         return totalSize // 返回总数
     } catch (error) {
         console.error('Failed to fetch users:', error)
@@ -167,6 +171,7 @@ const resetUser = async () => {
         await userUpdateService(ruleForm.value)
         ElMessage.success('修改成功')
         // 更新页面
+        isVisible.value = false
         searchAllUser()
     } catch (error) {
         console.error('上传失败', error)
@@ -212,7 +217,7 @@ const downloadUser = async () => {
         const link = document.createElement('a')
         link.href = url
         // 设置下载文件名
-        link.download = '报名数据.xlsx'
+        link.download = '报名数据.xls'
         // 触发点击
         document.body.appendChild(link)
         link.click()
@@ -223,6 +228,25 @@ const downloadUser = async () => {
         console.error('下载失败:', error)
     }
 }
+
+// 关闭对话框bug取消
+const handleClose = (done) => {
+    searchAllUser()
+    done()
+}
+
+const searchByName = ref()
+const isSearch1 = ref(false)
+const filteredTableData = computed(() => {
+    if (isSearch1.value) {
+        counterAll()
+        // 如果启用了搜索，则根据搜索词过滤数据s
+        return tableData.value.filter((data) => !searchByName.value || data.name.toLowerCase().includes(searchByName.value.toLowerCase()))
+    } else {
+        return tableData.value
+    }
+})
+const pageSize1 = ref(10)
 </script>
 
 <template>
@@ -230,11 +254,15 @@ const downloadUser = async () => {
         <el-row style="background-color: #ffffff; padding: 10px">
             <el-button type="success" @click="addUser()">新增</el-button>
             <el-button type="primary" @click="downloadUser()">
-                下载为Excel表格<el-icon class="el-icon--right"><Upload /></el-icon>
+                下载为Excel表格<el-icon class="el-icon--right">
+                    <Upload />
+                </el-icon>
             </el-button>
+            <el-input v-model="searchByName" @click="isSearch1 = true"
+                style="width: 150px; margin-left: 1200px; margin-top: -25px" placeholder="请输入姓名以检索" />
         </el-row>
 
-        <el-table :data="tableData" style="width: 100%; height: 520px">
+        <el-table :data="filteredTableData" style="width: 100%; height: 520px">
             <el-table-column prop="id" label="编号" width="100" />
             <el-table-column prop="name" label="新生姓名" width="150" />
             <el-table-column prop="banji" label="新生班级" width="200" />
@@ -252,16 +280,11 @@ const downloadUser = async () => {
         </el-table>
         <!-- 分页相关-->
         <!-- @size-change="handleSizeChange"   :page-sizes="pageSizes"单页数据数配置项 -->
-        <el-pagination
-            style="padding: 10px; background-color: #ffffff"
-            :current-page="currentPage"
-            :page-sizes="[10]"
-            layout="total, sizes,prev, pager, next, jumper"
-            :total
-            @current-change="handleCurrentChange"
-        ></el-pagination>
+        <el-pagination style="padding: 10px; background-color: #ffffff" :current-page="currentPage"
+            v-model:page-size="pageSize1" :page-sizes="[10]" layout="total, sizes,prev, pager, next, jumper" :total
+            @current-change="handleCurrentChange"></el-pagination>
         <!-- 编辑和增加 -->
-        <el-dialog :title="title" v-model="isVisible" draggable>
+        <el-dialog :title="title" v-model="isVisible" draggable :before-close="handleClose">
             <el-form :model="ruleForm" :rules="rules" ref="rule_form" label-width="80px" class="rule_form">
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="ruleForm.name" style="width: 30%" />

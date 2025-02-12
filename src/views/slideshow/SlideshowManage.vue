@@ -47,27 +47,35 @@ onMounted(() => {
 // 删除
 
 const handleRemove = async (uploadFile) => {
-    ElMessageBox.confirm('您确认要删除吗?', '温馨提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-    })
-        .then(async () => {
-            //1.发送删除请求
+    if (isUpload.value) {
+        ElMessageBox.confirm('您确认要删除吗?', '温馨提示', {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+        })
+            .then(async () => {
+                //1.发送删除请求
+                await userDelectimagesService({ id: uploadFile.id })
+                await getAllImages()
+                ElMessage({
+                    type: 'success',
+                    message: '删除成功'
+                })
+            })
+            .catch(async () => {
+                await getAllImages()
+                ElMessage({
+                    type: 'info',
+                    message: '取消删除'
+                })
+            })
+    } else {
+        try {
             await userDelectimagesService({ id: uploadFile.id })
-            await getAllImages()
-            ElMessage({
-                type: 'success',
-                message: '删除成功'
-            })
-        })
-        .catch(async () => {
-            await getAllImages()
-            ElMessage({
-                type: 'info',
-                message: '取消删除'
-            })
-        })
+        } catch (error) {
+            console.error('服务器出错', error)
+        }
+    }
 }
 // 预览
 const dialogImageUrl = ref('')
@@ -75,6 +83,35 @@ const dialogVisible = ref(false)
 const handlePreview = (uploadFile) => {
     dialogImageUrl.value = uploadFile.url
     dialogVisible.value = true
+}
+
+// import {ElMessageBox, UploadProps, UploadUserFile} from 'element-plus'
+const isUpload = ref(true)
+const beforeAvatarUpload = (rawFile) => {
+    return new Promise((resolve, reject) => {
+        var reader = new FileReader()
+        // reader.onload = function (event) {
+        //     var txt = event.target.result
+        //     var img = document.createElement('img')
+        //     img.src = txt
+        //     img.onload = function () {
+        //         if (img.width > 196 || img.height > 110) {
+        //             ElMessage.error('图片尺寸最大为196*110')
+        //             return reject(false)
+        //         }
+        //     }
+        // }
+        reader.readAsDataURL(rawFile)
+        if (rawFile.type !== 'image/png' && rawFile.type !== 'image/jpg' && rawFile.type !== 'image/jpeg') {
+            ElMessage.error('图片仅支持jpg、jpeg、png格式!')
+            isUpload.value = false
+            return reject(false)
+        } else if (rawFile.size / 1024 / 1024 > 0.5) {
+            ElMessage.error('图片大小不能超过500kb!')
+            isUpload.value = false
+            return reject(false)
+        }
+    })
 }
 </script>
 
@@ -95,22 +132,13 @@ const handlePreview = (uploadFile) => {
         list-type="picture" 列表的方法
         drag 拖拽上传
     -->
-    <el-upload
-        v-model:file-list="fileList"
-        v-loading="isLoading"
-        action=""
-        :http-request="upload"
-        class="upload"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        list-type="picture"
-        drag
-        multiple
-    >
+    <el-upload v-model:file-list="fileList" v-loading="isLoading" action="" :http-request="upload" class="upload"
+        :on-preview="handlePreview" :on-remove="handleRemove" list-type="picture" drag multiple
+        :before-upload="beforeAvatarUpload" accept="image/jpg, image/jpeg, image/png">
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">拖拽图片或 <em>点击上传</em></div>
         <template #tip>
-            <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
+            <div class="el-upload__tip">轮播图的上传大小最好小于500kb</div>
         </template>
     </el-upload>
 

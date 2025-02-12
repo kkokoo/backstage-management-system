@@ -32,7 +32,7 @@ const logout = () => {
         .catch(() => {
             ElMessage({
                 type: 'info',
-                message: '退出登录无法被服务器接收'
+                message: '取消退出登录'
             })
         })
 }
@@ -54,14 +54,8 @@ const logout = () => {
             <!-- 左侧菜单 -->
             <el-aside width="200px">
                 <!-- element-plus的菜单标签 -->
-                <el-menu
-                    active-text-color="#00000"
-                    background-color="#ecf5ff"
-                    text-color="#6d6d6e"
-                    :default-active="$route.path"
-                    style="--el-menu-hover-bg-color: #c6e2ff"
-                    router
-                >
+                <el-menu active-text-color="#00000" background-color="#ecf5ff" text-color="#6d6d6e"
+                    :default-active="$route.path" style="--el-menu-hover-bg-color: #c6e2ff" router>
                     <el-menu-item index="/manage/freshman">
                         <el-icon>
                             <User />
@@ -75,7 +69,9 @@ const logout = () => {
                         <span>就业数据管理</span>
                     </el-menu-item>
                     <el-menu-item index="/manage/slideshow">
-                        <el-icon><VideoCameraFilled /></el-icon>
+                        <el-icon>
+                            <VideoCameraFilled />
+                        </el-icon>
                         <span>轮播图管理</span>
                     </el-menu-item>
                 </el-menu>
@@ -100,6 +96,7 @@ const logout = () => {
     .el-aside {
         background-color: #ecf5ff;
         border: solid 1px #d9ecff;
+
         .el-menu {
             border-right: none;
         }
