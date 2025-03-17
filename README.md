@@ -1,15 +1,5 @@
-# 这是一个通过Vue3,elementPlus搭建的后台管理系统
+# 这是一个通过Vue3,elementPlus搭建的迎新网站后台管理系统
 # backstage-management-system
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
@@ -32,9 +22,5 @@ npm run dev
 
 npm run build
 ```
-
-<<<<<<< HEAD
-=======
-
 这是一个通过Vue3,elementPlus搭建的后台管理系统
->>>>>>> 735831b (最终)
+
